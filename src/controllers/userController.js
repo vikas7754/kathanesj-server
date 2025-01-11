@@ -80,7 +80,7 @@ const logout = async (req, res) => {
     if (!(await user.deleteToken(token)))
       return res.status(400).json({ message: "Something went wrong!" });
     res.clearCookie("auth");
-    res.status(200).json({ message: "Logged out successfully!" });
+    return res.status(200).json({ message: "Logged out successfully!" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
