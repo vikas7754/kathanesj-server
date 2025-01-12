@@ -2,12 +2,13 @@ const Product = require("../models/product");
 
 const addProduct = async (req, res) => {
   try {
-    const { karat, percentage, show } = req.body;
+    const { karat, percentage, show, title, gst } = req.body;
     const newProduct = new Product({
-      title: `Gold Rate (${karat}Kt)`,
+      title,
       karat,
       percentage,
       show,
+      gst,
     });
     const product = await newProduct.save();
     return res.status(200).json(product);
@@ -18,10 +19,10 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { karat, percentage, show } = req.body;
+    const { karat, percentage, show, title, gst } = req.body;
     const product = await Product.findByIdAndUpdate(
       { _id: req.params.id },
-      { title: `Gold Rate (${karat}Kt)`, karat, percentage, show }
+      { title, karat, percentage, show, gst }
     );
     return res.status(200).json(product);
   } catch (err) {
