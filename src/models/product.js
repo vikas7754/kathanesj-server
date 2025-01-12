@@ -10,13 +10,16 @@ const productSchema = new Schema(
       trim: true,
     },
     karat: {
-      type: String,
+      type: Number,
       required: true,
-      trim: true,
     },
     percentage: {
       type: Number,
       required: true,
+    },
+    gst: {
+      type: Number,
+      default: 0,
     },
     show: {
       type: Boolean,
