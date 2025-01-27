@@ -49,7 +49,14 @@ const signup = async (req, res) => {
     signupMail({ name, email, mobile, password });
 
     const token = await user.generateToken();
-    return res.cookie("auth", token).json(user);
+    return res
+      .cookie("auth", token, {
+        httpOnly: true, // Prevent access to the cookie via JavaScript
+        secure: true, // Cookie is only sent over HTTPS
+        sameSite: "strict", // Prevent cross-origin requests from using the cookie
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration (30 days)
+      })
+      .json(user);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

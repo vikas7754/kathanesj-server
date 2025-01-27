@@ -60,7 +60,7 @@ userSchema.pre("validate", function (next) {
 
 // to signup a user
 userSchema.pre("save", function (next) {
-  var user = this;
+  const user = this;
   if (user.isModified("password")) {
     bcrypt.genSalt(salt, function (err, salt) {
       if (err) return next(err);
@@ -83,8 +83,8 @@ userSchema.methods.comparepassword = async function (password) {
 
 // generate token
 userSchema.methods.generateToken = async function () {
-  var user = this;
-  var token = jwt.sign(user._id.toHexString(), SECRET);
+  const user = this;
+  const token = jwt.sign(user._id.toHexString(), SECRET);
   user.token = token;
   await user.updateOne({ $set: { token: token } });
   return token;
