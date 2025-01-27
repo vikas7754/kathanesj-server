@@ -243,6 +243,7 @@ const deleteAccount = async (req, res) => {
     res.clearCookie("auth");
     return res.status(200).json({ message: "Account deleted successfully!" });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: err.message });
   }
 };
