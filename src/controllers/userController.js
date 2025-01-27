@@ -58,12 +58,19 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { mobile, password } = req.body;
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({ mobile, isActive: true });
     if (!user) return res.status(400).json({ message: "User not found!" });
     const isMatch = await user.comparepassword(password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password!" });
     const token = await user.generateToken();
-    return res.cookie("auth", token).json(user);
+    return res
+      .cookie("auth", token, {
+        httpOnly: true, // Prevent access to the cookie via JavaScript
+        secure: true, // Cookie is only sent over HTTPS
+        sameSite: "strict", // Prevent cross-origin requests from using the cookie
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration (30 days)
+      })
+      .json(user);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -226,11 +233,26 @@ const uploadSingleImage = async (req, res) => {
   });
 };
 
+const deleteAccount = async (req, res) => {
+  try {
+    const { user } = req;
+
+    await user.deleteToken(token);
+    await User.findByIdAndUpdate(user._id, { active: false }, { new: true });
+
+    res.clearCookie("auth");
+    return res.status(200).json({ message: "Account deleted successfully!" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   login,
   me,
   logout,
   signup,
+  deleteAccount,
   getUsers,
   exportUsers,
   updateProfile,

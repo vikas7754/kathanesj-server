@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema(
       type: Object,
       default: {},
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
     token: {
       type: String,
     },
@@ -91,7 +95,11 @@ userSchema.static("findByToken", async (token) => {
   try {
     const decode = jwt.verify(token, SECRET);
     const User = mongoose.model("User");
-    const userdata = await User.findOne({ _id: decode, token: token });
+    const userdata = await User.findOne({
+      _id: decode,
+      token: token,
+      active: true,
+    });
     return userdata;
   } catch (err) {
     throw err;
