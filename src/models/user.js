@@ -109,8 +109,9 @@ userSchema.static("findByToken", async (token) => {
 //delete token
 userSchema.methods.deleteToken = async (token, cb) => {
   try {
-    const User = mongoose.model("User");
-    const user = await User.updateOne({ $unset: { token: 1 } });
+    const user = this;
+    user.token = "";
+    await user.updateOne({ $unset: { token: 1 } });
     return user;
   } catch (err) {
     throw err;
