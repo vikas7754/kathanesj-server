@@ -58,7 +58,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { mobile, password } = req.body;
-    const user = await User.findOne({ mobile, isActive: true });
+    const user = await User.findOne({ mobile, active: true });
     if (!user) return res.status(400).json({ message: "User not found!" });
     const isMatch = await user.comparepassword(password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password!" });
@@ -238,7 +238,7 @@ const deleteAccount = async (req, res) => {
     const { user } = req;
 
     await user.deleteToken(token);
-    await User.findByIdAndUpdate(user._id, { active: false }, { new: true });
+    await User.updateOne({ _id: user._id }, { $set: { active: false } });
 
     res.clearCookie("auth");
     return res.status(200).json({ message: "Account deleted successfully!" });
