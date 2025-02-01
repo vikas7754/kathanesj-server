@@ -19,8 +19,9 @@ const userSchema = mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
-      unique: 1,
+      // required: true,
+      // unique: 1,
+      default: "",
     },
     whatsapp: {
       type: String,

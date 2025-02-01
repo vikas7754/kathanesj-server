@@ -26,15 +26,33 @@ function generateOTP() {
 const signup = async (req, res) => {
   try {
     const { name, email, mobile, address, city, state } = req.body;
-    if (!name || !email || !mobile || !city)
-      return res.status(400).json({ message: "All fields are required!" });
+    // if (!name || !email || !mobile || !city)
+    //   return res.status(400).json({ message: "All fields are required!" });
+
+    // if (mobile.length !== 10) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Mobile number should be 10 digits" });
+    // }
+
+    if (!name) return res.status(400).json({ message: "Name is required!" });
+    if (!email) return res.status(400).json({ message: "Email is required!" });
+    if (!city) return res.status(400).json({ message: "City is required!" });
+
+    const emailRegEx = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegEx.test(email)) {
+      return res.status(400).json({ message: "Invalid Email Address" });
+    }
 
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist)
       return res.status(400).json({ message: "Email already exist!" });
-    const isMobileExist = await User.findOne({ mobile });
-    if (isMobileExist)
-      return res.status(400).json({ message: "Mobile already exist!" });
+
+    if (mobile) {
+      const isMobileExist = await User.findOne({ mobile });
+      if (isMobileExist)
+        return res.status(400).json({ message: "Mobile already exist!" });
+    }
 
     const password = generatePassword();
     const user = new User({
