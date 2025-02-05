@@ -83,7 +83,11 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { password, mobile } = req.body;
-    const input = req.body.input.toLowerCase();
+    let input = req.body?.input;
+    if (input) {
+      input = input.trim();
+      input = input.toLowerCase();
+    }
 
     const query = { active: true };
     if (input) {
