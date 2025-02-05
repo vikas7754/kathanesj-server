@@ -82,8 +82,12 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { mobile, password } = req.body;
-    const user = await User.findOne({ mobile, active: true });
+    const { password } = req.body;
+    const input = req.body.input.toLowerCase();
+    const user = await User.findOne({
+      $or: [{ email: input }, { mobile: input }],
+      active: true,
+    });
     if (!user) return res.status(400).json({ message: "User not found!" });
     const isMatch = await user.comparepassword(password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password!" });
