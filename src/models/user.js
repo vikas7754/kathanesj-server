@@ -85,11 +85,27 @@ userSchema.methods.comparepassword = async function (password) {
 
 // generate token
 userSchema.methods.generateToken = async function () {
-  const user = this;
-  const token = jwt.sign(user._id.toHexString(), SECRET);
-  user.token = token;
-  await user.updateOne({ $set: { token: token } });
-  return token;
+  try {
+    const user = this;
+    const token = jwt.sign(user._id.toHexString(), SECRET);
+    user.token = token;
+    await user.updateOne({ $set: { token: token } });
+    return token;
+  } catch (err) {
+    throw err;
+  }
+};
+
+//delete token
+userSchema.methods.deleteToken = async function () {
+  try {
+    const user = this;
+    user.token = "";
+    await user.updateOne({ $set: { token: "" } });
+    return user;
+  } catch (err) {
+    throw err;
+  }
 };
 
 // find by token
@@ -107,17 +123,5 @@ userSchema.static("findByToken", async (token) => {
     throw err;
   }
 });
-
-//delete token
-userSchema.methods.deleteToken = async (token, cb) => {
-  try {
-    const user = this;
-    user.token = "";
-    await user.updateOne({ $unset: { token: 1 } });
-    return user;
-  } catch (err) {
-    throw err;
-  }
-};
 
 module.exports = mongoose.model("User", userSchema);
